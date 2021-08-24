@@ -25,7 +25,7 @@ public class UdpHeartbeatClient implements Runnable {
 	private String id = UUID.randomUUID().toString();
 	private String host = "boodskap.xyz";
 	private int port = 5656;
-	private long sleep = 30000;
+	private long sleep = 10000;
 	
 	private UdpHeartbeatClient() {
 	}
@@ -97,7 +97,14 @@ public class UdpHeartbeatClient implements Runnable {
 			
 			while(!Thread.currentThread().isInterrupted()) {
 				
-				String data = String.format("%s,%d,%d", id, System.currentTimeMillis(), Runtime.getRuntime().freeMemory());
+				String data = String.format("%s,%d,%d,%d,%d,%d", 
+						id, 
+						System.currentTimeMillis(), 
+						Runtime.getRuntime().availableProcessors(),
+						Runtime.getRuntime().maxMemory(),
+						Runtime.getRuntime().freeMemory(),
+						Runtime.getRuntime().totalMemory()
+						);
 				
 				byte[] bdata = data.getBytes();
 				
@@ -105,7 +112,7 @@ public class UdpHeartbeatClient implements Runnable {
 				
 				_socket.send(packet);
 				
-				System.out.format("Heartbeat sent to %s:%d\n", host, port);
+				System.out.format("Heartbeat %s sent to %s:%d\n", data, host, port);
 				
 				Thread.sleep(sleep);
 			}
